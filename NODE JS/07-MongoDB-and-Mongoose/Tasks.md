@@ -1,4 +1,6 @@
-# 🟢 Task 1 — MongoDB CRUD
+# MongoDB and Mongoose Practice Tasks
+
+## 🟢 Task 1 — MongoDB CRUD
 
 Create:
 
@@ -11,55 +13,53 @@ Insert at least 10 users containing:
 
 ```js
 {
-    name,
-    email,
-    age,
-    city,
-    skills,
-    salary,
-    isActive
+  name,
+  email,
+  age,
+  city,
+  skills,
+  salary,
+  isActive,
 }
 ```
 
-Practice:
+### Practice
 
-- insertOne
-- insertMany
-- find
-- findOne
-- updateOne
-- updateMany
-- deleteOne
-- deleteMany
+- `insertOne`
+- `insertMany`
+- `find`
+- `findOne`
+- `updateOne`
+- `updateMany`
+- `deleteOne`
+- `deleteMany`
 
-Don't move forward until you can comfortably write these without looking them up.
+Do not move forward until you can comfortably write these without looking them up.
 
 ## 🟢 Task 2 — MongoDB Query Challenge
 
-Using your users:
+Using your users, implement queries for:
 
-Implement queries for:
-
-age >= 21
-salary between 40k and 80k
-Delhi OR Mumbai
-Node.js users
-Node.js AND MongoDB users
-active users earning > 50k
-projection
-sorting
-limit
-skip
+- Age greater than or equal to 21
+- Salary between 40k and 80k
+- Delhi **or** Mumbai
+- Node.js users
+- Node.js **and** MongoDB users
+- Active users earning more than 50k
+- Projection
+- Sorting
+- `limit`
+- `skip`
 
 Also practice:
 
-- $in
-- $nin
-- $and
-- $or
-- $gte
-- $lte
-- $all
+- `$in`
+- `$nin`
+- `$and`
+- `$or`
+- `$gte`
+- `$lte`
+- `$all`
 
 ## 🟡 Task 3 — Build a Mongoose User Model
 
@@ -74,48 +74,51 @@ Task/
     └── database.js
 ```
 
-Create a Mongoose User schema:
+Create a Mongoose User schema with:
 
-- name
-- email
-- age
-- city
-- skills
-- salary
-- isActive
+- `name`
+- `email`
+- `age`
+- `city`
+- `skills`
+- `salary`
+- `isActive`
 
 Add appropriate:
 
-- required
-- type
-- min/max
-- unique
-- timestamps
+- `required`
+- `type`
+- `min` / `max`
+- `unique`
+- `timestamps`
 
 Then connect it to MongoDB.
 
-## Goal
+### Goal
 
-You should be able to:
+You should be able to use:
 
 ```js
-await User.create(...)
-await User.find(...)
-await User.findById(...)
-await User.findByIdAndUpdate(...)
-await User.findByIdAndDelete(...)
-
+await User.create(...);
+await User.find(...);
+await User.findById(...);
+await User.findByIdAndUpdate(...);
+await User.findByIdAndDelete(...);
 ```
+
 ## 🟡 Task 4 — Convert Your Job API to MongoDB + Mongoose
+
 This is the most important task.
 
 Take your previous Job API:
 
+```text
 POST   /api/jobs
 GET    /api/jobs
 GET    /api/jobs/:id
 PATCH  /api/jobs/:id
 DELETE /api/jobs/:id
+```
 
 Remove:
 
@@ -140,53 +143,59 @@ models/
 └── job.model.js
 ```
 
-Your schema:
+Your schema should include:
 
-- title
-- company
-- location
-- salary
-- skills
-- experience
-- isActive
-- createdAt
-- updatedAt
+- `title`
+- `company`
+- `location`
+- `salary`
+- `skills`
+- `experience`
+- `isActive`
+- `createdAt`
+- `updatedAt`
 
-Now you're building an actual persistent backend.
+Now you are building an actual persistent backend.
 
 ## 🟡 Task 5 — Job API Filtering + Pagination
 
 Implement:
 
+```text
 GET /api/jobs?location=Delhi
 GET /api/jobs?minSalary=50000
 GET /api/jobs?skill=Node.js
 GET /api/jobs?page=2&limit=10
 GET /api/jobs?sort=salary
+```
 
 Combine them:
 
+```text
 GET /api/jobs?location=Delhi&minSalary=50000&skill=Node.js&page=2&limit=5
+```
 
 Use Mongoose query chaining:
 
+```js
 Job.find(...)
-    .sort(...)
-    .skip(...)
-    .limit(...)
+  .sort(...)
+  .skip(...)
+  .limit(...);
+```
 
 Return:
 
-```js
+```json
 {
-    "success": true,
-    "data": [],
-    "pagination": {
-        "page": 2,
-        "limit": 5,
-        "total": 42,
-        "totalPages": 9
-    }
+  "success": true,
+  "data": [],
+  "pagination": {
+    "page": 2,
+    "limit": 5,
+    "total": 42,
+    "totalPages": 9
+  }
 }
 ```
 
@@ -194,58 +203,46 @@ This is a real REST API pattern.
 
 ## 🟠 Task 6 — Indexing + Query Optimization
 
-Add indexes to your Job model.
+Add indexes to your Job model. Think about which fields are frequently queried:
 
-Think about which fields are frequently queried:
+- `location`
+- `salary`
+- `skills`
+- `company`
 
-- location
-- salary
-- skills
-- company
-
-Don't automatically index all of them.
-
-Create an appropriate index strategy.
+Do not automatically index all of them. Create an appropriate index strategy.
 
 Then inspect queries with MongoDB:
 
 ```js
-.explain("executionStats")
+.explain("executionStats");
 ```
 
-Compare before and after indexes.
+Compare queries before and after adding indexes.
 
-## Goal
+### Goal
 
 Understand:
 
-- COLLSCAN
-- vs
-- IXSCAN
+- `COLLSCAN` vs. `IXSCAN`
+- `totalDocsExamined`
+- `totalKeysExamined`
 
-and:
-
-- totalDocsExamined
-- totalKeysExamined
 ## 🟠 Task 7 — Aggregation Analytics API
 
-Now use your Job collection to build analytics.
+Use your Job collection to build analytics.
 
-Create:
+Create `GET /api/jobs/stats`. It should return things such as:
 
-GET /api/jobs/stats
+- Total jobs
+- Average salary
+- Highest salary
+- Lowest salary
+- Jobs by location
+- Jobs by company
+- Jobs by skill
 
-It should return things like:
-
-- total jobs
-- average salary
-- highest salary
-- lowest salary
-- jobs by location
-- jobs by company
-- jobs by skill
-
-Use MongoDB:
+Use MongoDB aggregation operators:
 
 ```js
 $match
@@ -259,32 +256,20 @@ This is your first proper aggregation-based API.
 
 ## 🟠 Task 8 — User + Job + Application Models
 
-Create:
+Create these models:
 
-User
-Job
-Application
-User
-name
-email
-skills
-Job
-title
-company
-salary
-skills
-Application
-student
-job
-status
-appliedAt
+| Model | Fields |
+| --- | --- |
+| User | `name`, `email`, `skills` |
+| Job | `title`, `company`, `salary`, `skills` |
+| Application | `student`, `job`, `status`, `appliedAt` |
 
 Use references:
 
 ```js
 student: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
 }
 ```
 
@@ -292,29 +277,28 @@ and:
 
 ```js
 job: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Job"
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Job",
 }
-## 🔴 Task 9 — populate()
 ```
 
-Create:
+## 🔴 Task 9 — `populate()`
 
-GET /api/applications
+Create `GET /api/applications`.
 
 Return something like:
 
-```js
+```json
 {
-    "student": {
-        "name": "Saurabh",
-        "email": "saurabh@example.com"
-    },
-    "job": {
-        "title": "Backend Developer",
-        "company": "ABC Technologies"
-    },
-    "status": "pending"
+  "student": {
+    "name": "Saurabh",
+    "email": "saurabh@example.com"
+  },
+  "job": {
+    "title": "Backend Developer",
+    "company": "ABC Technologies"
+  },
+  "status": "pending"
 }
 ```
 
@@ -329,19 +313,17 @@ This is a very important Mongoose skill.
 
 ## 🔴 Task 10 — Mongoose Middleware
 
-Add a User schema.
-
-Use:
+Add a User schema. Use:
 
 ```js
-pre("save")
+pre("save");
 ```
 
-to perform some useful operation before saving.
+to perform a useful operation before saving.
 
-A classic example is password hashing, but if you haven't learned authentication/password hashing yet, use a harmless logging/transformation exercise first.
+A classic example is password hashing, but if you have not learned authentication or password hashing yet, use a harmless logging or transformation exercise first.
 
-Also experiment with a post("save") hook.
+Also experiment with a `post("save")` hook.
 
 Understand:
 
@@ -349,18 +331,19 @@ Understand:
 Express middleware
         ≠
 Mongoose middleware
-## 🔴 Task 11 — Data Modeling Challenge
 ```
+
+## 🔴 Task 11 — Data Modeling Challenge
 
 Design the MongoDB structure for your College Alumni Platform.
 
 Entities:
 
-User
-AlumniProfile
-Job
-Application
-Message
+- User
+- AlumniProfile
+- Job
+- Application
+- Message
 
 Decide:
 
@@ -388,42 +371,167 @@ Message
 Alumni
 ```
 
-Don't code this immediately. Design it first.
+Do not code this immediately. Design it first.
 
 ## 🔴 Task 12 — Transactions
 
-Build a small wallet system:
+Build a small wallet system with:
 
-User
-Wallet
-Transaction
+- User
+- Wallet
+- Transaction
 
-Implement:
+Implement `POST /api/transfer`.
 
-POST /api/transfer
+Transfer `₹2000` from one user to another. The operation must:
 
-Transfer:
+1. Deduct money.
+2. Add money.
+3. Create a transaction record.
+4. Commit.
 
-₹2000
-
-from one user to another.
-
-The operation must:
-
-1. Deduct money
-2. Add money
-3. Create transaction record
-4. Commit
-
-If anything fails:
-
-ROLLBACK
+If anything fails, roll back the transaction.
 
 This will teach you MongoDB transactions and atomicity.
 
+## 🟠 Task 13 — N+1 Problem + `$lookup`
+
+Create two collections:
+
+```js
+// companies
+{
+  name: "ABC Technologies",
+  location: "Delhi",
+}
+
+// jobs
+{
+  title: "Backend Developer",
+  salary: 30000,
+  companyId: ObjectId("..."),
+}
+```
+
+Your Job should reference a company using `companyId`.
+
+### Part 1 — Create the N+1 Problem
+
+Create `GET /api/jobs`.
+
+First fetch all jobs:
+
+```text
+Jobs → 1 query
+```
+
+Then, for every job, fetch its company separately:
+
+```text
+Job 1 → Company query
+Job 2 → Company query
+Job 3 → Company query
+...
+```
+
+If you have 10 jobs, your API effectively performs:
+
+```text
+1 + 10 = 11 queries
+```
+
+Use logging to verify how many database queries are being made.
+
+### Part 2 — Solve It with Mongoose `populate()`
+
+Modify your models so `companyId` has a Mongoose reference:
+
+```text
+Job
+ └── companyId → Company
+```
+
+Then create `GET /api/jobs/populated`.
+
+Return:
+
+```json
+[
+  {
+    "title": "Backend Developer",
+    "salary": 30000,
+    "company": {
+      "name": "ABC Technologies",
+      "location": "Delhi"
+    }
+  }
+]
+```
+
+The goal is to understand how `populate()` avoids manually doing:
+
+```js
+for (...) {
+  await Company.findById(...);
+}
+```
+
+### Part 3 — Solve It with MongoDB `$lookup`
+
+Create `GET /api/jobs/lookup`.
+
+Use an aggregation pipeline with:
+
+```text
+$lookup
+→ $unwind
+→ $project
+```
+
+Return the same kind of result:
+
+```json
+[
+  {
+    "title": "Backend Developer",
+    "salary": 30000,
+    "company": {
+      "name": "ABC Technologies",
+      "location": "Delhi"
+    }
+  }
+]
+```
+
+### 🎯 What You Should Understand After Task 13
+
+```text
+Naive approach
+    ↓
+1 Job query
+    ↓
+N Company queries
+    ↓
+N + 1 problem ❌
+
+populate()
+    ↓
+Mongoose handles the relationship
+
+$lookup
+    ↓
+MongoDB joins related documents
+```
+
+#### Important Distinction
+
+Do not think: “`populate()` always means exactly one database query.” That is not necessarily true internally. The important thing is that you are not manually issuing one query per job; `populate()` manages fetching the referenced documents for you.
+
+`$lookup` is MongoDB's aggregation-based way of combining related documents.
+
 ## 🔥 Final Project — Real Backend
 
-After completing the tasks, take your Job API and turn it into:
+After completing the tasks, turn your Job API into:
 
 ```text
 Express
@@ -439,20 +547,20 @@ Mongoose Models
 MongoDB
 ```
 
-With:
+Include:
 
-Authentication
-Validation
-Centralized Error Handling
-CRUD
-Filtering
-Searching
-Sorting
-Pagination
-Indexes
-Aggregation
-Relationships
-populate()
+- Authentication
+- Validation
+- Centralized error handling
+- CRUD
+- Filtering
+- Searching
+- Sorting
+- Pagination
+- Indexes
+- Aggregation
+- Relationships
+- `populate()`
 
 A good final structure:
 
@@ -493,7 +601,11 @@ backend/
 ├── .env
 ├── .gitignore
 └── package.json
-The progression I want you to follow
+```
+
+### Recommended Progression
+
+```text
 MongoDB Shell
      ↓
 Queries
@@ -519,4 +631,4 @@ Transactions
 Production-oriented backend
 ```
 
-Task 4 is the turning point. Up to Task 3 you're learning MongoDB/Mongoose in isolation. From Task 4 onward, you're using them to build the kind of persistent backend you've been preparing for.
+Task 4 is the turning point. Up to Task 3, you are learning MongoDB and Mongoose in isolation. From Task 4 onward, you are using them to build the kind of persistent backend you have been preparing for.
