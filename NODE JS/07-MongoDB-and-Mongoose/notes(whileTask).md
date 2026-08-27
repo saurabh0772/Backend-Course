@@ -23,3 +23,12 @@ Quick Cheat Sheet
 
 runValidators: true 
 in updation, it does not validate inputs again as per schema, so to do this , put runvalidators at the end
+
+
+
+
+
+missing topics for notes
+populate
+embeddding referencing
+mongoose middleware

@@ -256,37 +256,81 @@ This is your first proper aggregation-based API.
 
 ## 🟠 Task 8 — User + Job + Application Models
 
-Create these models:
+### What You Have to Do
 
-| Model | Fields |
-| --- | --- |
-| User | `name`, `email`, `skills` |
-| Job | `title`, `company`, `salary`, `skills` |
-| Application | `student`, `job`, `status`, `appliedAt` |
+Create 3 Mongoose models:
 
-Use references:
+1. **User**
+   - Fields: `name`, `email`, `skills`
+   - Example:
+     ```js
+     {
+       name: "Saurabh",
+       email: "saurabh@example.com",
+       skills: ["Node.js", "MongoDB"]
+     }
+     ```
 
-```js
-student: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "User",
-}
+2. **Job**
+   - Fields: `title`, `company`, `salary`, `skills`
+   - Example:
+     ```js
+     {
+       title: "Backend Developer",
+       company: "ABC Technologies",
+       salary: 60000,
+       skills: ["Node.js", "MongoDB"]
+     }
+     ```
+
+3. **Application**
+   - Fields: `student`, `job`, `status`, `appliedAt`
+
+The important part is:
+
+```text
+student → User
+job     → Job
 ```
 
-and:
+So an `Application` connects a `student` with a `job`.
 
-```js
-job: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Job",
-}
+Think:
+
+```text
+Saurabh
+   ↓
+Application
+   ↓
+Backend Developer
 ```
+
+Use MongoDB references for `student` and `job`.
+
+### Goal
+
+Learn how to create relationships between MongoDB collections using `ObjectId` references.
 
 ## 🔴 Task 9 — `populate()`
 
-Create `GET /api/applications`.
+Now use the models from Task 8.
 
-Return something like:
+Create:
+
+```text
+GET /api/applications
+```
+
+When you fetch applications, don't return only:
+
+```js
+student: ObjectId
+job: ObjectId
+```
+
+Instead, return the related information.
+
+For example:
 
 ```json
 {
@@ -302,97 +346,163 @@ Return something like:
 }
 ```
 
-Use:
+You need to use:
 
 ```js
-.populate("student")
-.populate("job")
+populate("student")
+populate("job")
 ```
 
-This is a very important Mongoose skill.
+### Goal
+
+Understand how Mongoose fetches referenced documents and puts them into the result.
 
 ## 🔴 Task 10 — Mongoose Middleware
 
-Add a User schema. Use:
+Create a User schema and experiment with:
 
-```js
-pre("save");
-```
+- `pre("save")`
+- `post("save")`
 
-to perform a useful operation before saving.
+### What You Need to Understand
 
-A classic example is password hashing, but if you have not learned authentication or password hashing yet, use a harmless logging or transformation exercise first.
-
-Also experiment with a `post("save")` hook.
-
-Understand:
+When a User is saved:
 
 ```text
-Express middleware
-        ≠
-Mongoose middleware
+Before saving
+      ↓
+pre("save")
+      ↓
+MongoDB save
+      ↓
+post("save")
+      ↓
+After saving
 ```
+
+For this task, don't worry about authentication or password hashing yet.
+
+Just perform something simple, such as:
+
+- Before save → log something
+- After save → log something
+
+### Goal
+
+Understand the difference between **Express middleware** and **Mongoose middleware**:
+
+- **Express middleware** works around HTTP requests.
+- **Mongoose middleware** works around database/model operations.
 
 ## 🔴 Task 11 — Data Modeling Challenge
 
-Design the MongoDB structure for your College Alumni Platform.
+Don't code this task initially.
 
-Entities:
+You need to design the database for your College Alumni Platform.
 
-- User
-- AlumniProfile
-- Job
-- Application
-- Message
+You have:
 
-Decide:
+- `User`
+- `AlumniProfile`
+- `Job`
+- `Application`
+- `Message`
 
-- What should be embedded?
-- What should be referenced?
-- Which fields should have indexes?
-- Which fields should be unique?
-- What relationships exist?
+Your job is to decide:
+
+1. **Which data should be embedded?**
+   ```text
+   User
+    └── small related data
+   ```
+
+2. **Which data should be referenced?**
+   ```text
+   Application
+    ├── student → User
+    └── job → Job
+   ```
+
+3. **What relationships exist?**
+   ```text
+   User → AlumniProfile
+   User → Application
+   Application → Job
+   User → Message
+   ```
+
+4. **Which fields should be unique?**
+   - For example, think about `email`.
+
+5. **Which fields should have indexes?**
+   - Think about fields users will frequently search/filter by.
+
+### Goal
+
+Learn MongoDB database design before writing code.
+
+The important question is: *Should I embed this data or store it in another collection and reference it?*
+
+## 🔴 Task 12 — Transactions
+
+Create a small wallet system with:
+
+- `User`
+- `Wallet`
+- `Transaction`
+
+Build:
+
+```text
+POST /api/transfer
+```
+
+The API should transfer money from one user to another.
 
 For example:
 
 ```text
-User
- ↓
-AlumniProfile
-User
- ↓
-Application
- ↓
-Job
-Student
- ↕
-Message
- ↕
-Alumni
+Saurabh → ₹5000
+Rahul   → ₹1000
 ```
 
-Do not code this immediately. Design it first.
+Transfer: `₹2000`
 
-## 🔴 Task 12 — Transactions
+After successful transfer:
 
-Build a small wallet system with:
+```text
+Saurabh → ₹3000
+Rahul   → ₹3000
+```
 
-- User
-- Wallet
-- Transaction
+And create a transaction record.
 
-Implement `POST /api/transfer`.
+### Important Requirement
 
-Transfer `₹2000` from one user to another. The operation must:
+These operations must be treated as one unit:
 
-1. Deduct money.
-2. Add money.
-3. Create a transaction record.
-4. Commit.
+1. Deduct ₹2000
+2. Add ₹2000
+3. Create transaction record
 
-If anything fails, roll back the transaction.
+If all succeed: `COMMIT`
+
+If anything fails: `ROLLBACK`
+
+So you should never end up with:
+
+- Money deducted ✅
+- Money not credited ❌
+- Transaction not recorded ❌
+
+### Goal
+
+Understand MongoDB transactions and atomicity.
+
+The main idea is: *Either all related database changes happen, or none of them happen.*
 
 This will teach you MongoDB transactions and atomicity.
+
 
 ## 🟠 Task 13 — N+1 Problem + `$lookup`
 
